@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Native SW Expert Roadmap v2 — 직군 육성체계 + 중급 나노디그리</title>
+<style>
+  :root{
+    --bg:#eef0f4; --surface:#ffffff; --ink:#161a22; --muted:#5b6472; --line:#dfe3ea;
+    --lg:#a50034; --lg-soft:#f6e8ee;
+    --found:#2563eb; --found-t:#eef4ff;
+    --inter:#0d9488; --inter-t:#e6f5f3;
+    --exp:#b45309; --exp-t:#fbf1e1;
+    --prop:#7c3aed; --prop-t:#f3eefe;
+    --band:#f59e0b; --band-t:#fff6e2; --band-ink:#7c4a02;
+    --base:#334155;
+    --shadow:0 1px 2px rgba(16,24,40,.06),0 8px 24px rgba(16,24,40,.06);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font-family:'Pretendard','Pretendard Variable','Apple SD Gothic Neo','Malgun Gothic','Segoe UI',system-ui,sans-serif;
+    line-height:1.55;-webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--lg);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:1380px;margin:0 auto;padding:28px 24px 60px}
+
+  /* Header */
+  header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:18px}
+  .ttl h1{font-size:27px;margin:0 0 4px;letter-spacing:-.5px;font-weight:800}
+  .ttl h1 .v2{font-size:14px;font-weight:800;color:#fff;background:var(--lg);padding:2px 9px;border-radius:8px;vertical-align:middle;margin-left:8px;letter-spacing:.5px}
+  .ttl .sub{color:var(--muted);font-size:13.5px;margin:0}
+  .ttl .lead{margin:10px 0 0;font-size:14px;max-width:820px;color:#2b313b}
+  .ttl .lead b{color:var(--lg)}
+  .badge{font-size:11px;color:#fff;background:var(--base);padding:3px 9px;border-radius:999px;letter-spacing:.3px}
+  .meta{text-align:right;font-size:12px;color:var(--muted);white-space:nowrap}
+
+  /* Principles strip */
+  .principles{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:16px 0 22px}
+  .pchip{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 11px;cursor:pointer;transition:.15s;box-shadow:var(--shadow)}
+  .pchip:hover{transform:translateY(-2px);border-color:var(--lg)}
+  .pchip .pn{font-size:10.5px;font-weight:700;color:var(--lg);letter-spacing:.4px}
+  .pchip .pt{font-size:12.5px;font-weight:700;margin-top:2px;line-height:1.3}
+  @media(max-width:1100px){.principles{grid-template-columns:repeat(3,1fr)}}
+  @media(max-width:620px){.principles{grid-template-columns:repeat(2,1fr)}}
+
+  /* Layout: matrix + panel */
+  .layout{display:grid;grid-template-columns:1fr 380px;gap:20px;align-items:start}
+  @media(max-width:1080px){.layout{grid-template-columns:1fr}}
+
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}
+  .card-h{padding:13px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .card-h h2{margin:0;font-size:15px;font-weight:800}
+  .card-h .hint{font-size:11.5px;color:var(--muted)}
+
+  /* Matrix grid */
+  .matrix{padding:16px}
+  .grid{
+    display:grid;
+    grid-template-columns:74px 158px 1fr 1fr 1fr;
+    gap:8px;
+  }
+  .ch{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;padding:2px 4px 6px;text-align:center}
+  .ch.l{text-align:left}
+  .trk{border-radius:10px 10px 0 0;padding:11px 8px;text-align:center;font-weight:800;font-size:15px;color:#fff;cursor:pointer;position:relative;transition:.15s}
+  .trk small{display:block;font-weight:600;font-size:10.5px;opacity:.85;margin-top:1px}
+  .trk:hover{filter:brightness(1.08)}
+  .trk.arch{background:#1e3a8a}.trk.sdet{background:#0f766e}.trk.sec{background:#9f1239}
+  .trk .more{position:absolute;top:6px;right:8px;font-size:10px;opacity:.7}
+
+  .lvl{border-radius:10px;padding:9px 6px;text-align:center;font-weight:800;font-size:12.5px;cursor:pointer;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:2px;transition:.15s;border:1px solid transparent}
+  .lvl:hover{transform:translateY(-1px)}
+  .lvl .lv-en{font-size:9.5px;font-weight:700;opacity:.8;letter-spacing:.3px}
+  .lvl .tag{font-size:9px;background:rgba(255,255,255,.6);border-radius:6px;padding:1px 5px;margin-top:2px}
+  .lvl.found{background:var(--found-t);color:var(--found);border-color:#cfe0ff}
+  .lvl.inter{background:var(--inter-t);color:var(--inter);border-color:#bfe6e0}
+  .lvl.exp{background:var(--exp-t);color:var(--exp);border-color:#f0dab2}
+  .lvl.prop{background:var(--prop-t);color:var(--prop);border-color:#e0d2fb}
+
+  .cert{border-radius:10px;padding:9px 10px;font-size:11.5px;font-weight:700;display:flex;flex-direction:column;justify-content:center;text-align:center;background:#f4f6f9;border:1px dashed #c8cfda;color:#2b313b}
+  .cert small{font-weight:600;color:var(--muted);font-size:10px;margin-top:2px}
+
+  .cell{border-radius:10px;padding:11px 11px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--line);background:#fff;transition:.15s;min-height:58px;display:flex;flex-direction:column;justify-content:center;gap:3px}
+  .cell:hover{border-color:var(--lg);box-shadow:0 4px 14px rgba(165,0,52,.10)}
+  .cell .ce-tag{font-size:9.5px;font-weight:800;letter-spacing:.3px;text-transform:uppercase;opacity:.7}
+  .cell.exp{background:var(--exp-t);border-color:#f0dab2}
+  .cell.exp .ce-tag{color:var(--exp)}
+  .cell.inter{background:#fff}
+  .cell.inter .ce-tag{color:var(--inter)}
+
+  .band{border-radius:10px;padding:11px 14px;font-size:12.5px;font-weight:700;cursor:pointer;transition:.15s;display:flex;align-items:center;gap:10px}
+  .band:hover{filter:brightness(.98);box-shadow:var(--shadow)}
+  .band .bk{font-size:10px;font-weight:800;letter-spacing:.4px;padding:2px 8px;border-radius:999px;white-space:nowrap}
+  .band.common{background:var(--band-t);border:1.5px solid var(--band);color:var(--band-ink)}
+  .band.common .bk{background:var(--band);color:#fff}
+  .band.boot{background:#e9f9ee;border:1.5px solid #16a34a;color:#14532d}
+  .band.boot .bk{background:#16a34a;color:#fff}
+  .band.prop{background:var(--prop-t);border:1.5px solid #c4b5fd;color:#5b21b6}
+  .band.prop .bk{background:var(--prop);color:#fff}
+  .base{grid-column:1/-1;background:var(--base);color:#fff;border-radius:10px;padding:11px 14px;font-size:12.5px;font-weight:700;text-align:center;cursor:pointer;letter-spacing:.2px}
+  .base:hover{background:#26303f}
+  .base small{font-weight:600;opacity:.8}
+
+  .gov{margin-top:10px;border:1px dashed #c8cfda;border-radius:10px;padding:10px 13px;background:#fafbfc;font-size:11.5px;color:#2b313b;cursor:pointer}
+  .gov b{color:var(--lg)}
+  .gov:hover{border-color:var(--lg)}
+
+  .flow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:14px;padding:11px 13px;background:#f4f6f9;border-radius:10px;font-size:11px;color:var(--muted)}
+  .flow .step{background:#fff;border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-weight:700;color:var(--ink)}
+  .flow .arr{color:var(--lg);font-weight:800}
+
+  /* Detail panel */
+  .panel{position:sticky;top:16px}
+  .panel .card-h{position:relative}
+  .pbody{padding:16px 18px;font-size:13px;max-height:calc(100vh - 130px);overflow:auto}
+  .pbody h3{margin:0 0 3px;font-size:17px;letter-spacing:-.3px}
+  .pbody .role-sub{color:var(--muted);font-size:12px;margin:0 0 12px}
+  .sec-blk{margin:13px 0}
+  .sec-blk .lbl{font-size:10.5px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--lg);margin-bottom:5px;display:flex;align-items:center;gap:6px}
+  .sec-blk .lbl::before{content:"";width:9px;height:9px;border-radius:2px;background:var(--lg)}
+  .sec-blk ul{margin:0;padding-left:17px}
+  .sec-blk li{margin:3px 0}
+  .sec-blk p{margin:0}
+  .quote{border-left:3px solid var(--line);padding:2px 0 2px 11px;color:#39414e;font-style:italic;margin:5px 0;font-size:12px}
+  .pill{display:inline-block;background:#f1f3f7;border:1px solid var(--line);border-radius:999px;padding:2px 9px;font-size:11px;font-weight:700;margin:2px 3px 2px 0}
+  .empty{color:var(--muted);font-size:12.5px;text-align:center;padding:28px 12px}
+  .empty .big{font-size:30px;margin-bottom:8px}
+
+  /* Courses (Intermediate Nano-Degrees) */
+  .courses{margin-top:20px}
+  .cbody{padding:14px 16px 18px}
+  .cnote{background:#f4f6f9;border:1px solid var(--line);border-radius:10px;padding:9px 13px;font-size:12.5px;margin-bottom:14px}
+  .cnote b{color:var(--lg)}
+  .cgroups{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  @media(max-width:1080px){.cgroups{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:620px){.cgroups{grid-template-columns:1fr}}
+  .cgroup{display:flex;flex-direction:column;gap:10px}
+  .cgroup>h3{margin:0 0 2px;font-size:13px;font-weight:800;padding:7px 10px;border-radius:8px;text-align:center;color:#fff}
+  .cgroup.common>h3{background:var(--band);color:#5a3600}
+  .cgroup.arch>h3{background:#1e3a8a}
+  .cgroup.sdet>h3{background:#0f766e}
+  .cgroup.sec>h3{background:#9f1239}
+  .ccard{border:1px solid var(--line);border-left-width:4px;border-radius:11px;padding:11px 12px;cursor:pointer;background:#fff;transition:.15s;display:flex;flex-direction:column;gap:6px}
+  .ccard:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+  .ccard.common{border-left-color:var(--band);background:var(--band-t)}
+  .ccard.arch{border-left-color:#2563eb;background:#eef4ff}
+  .ccard.sdet{border-left-color:#0d9488;background:#e6f5f3}
+  .ccard.sec{border-left-color:#be123c;background:#ffe9ee}
+  .cc-top{display:flex;justify-content:space-between;align-items:center}
+  .cc-code{font-size:11px;font-weight:800;letter-spacing:.4px;padding:1px 8px;border-radius:999px;color:#fff}
+  .ccard.common .cc-code{background:#b45309}
+  .ccard.arch .cc-code{background:#1e3a8a}
+  .ccard.sdet .cc-code{background:#0f766e}
+  .ccard.sec .cc-code{background:#9f1239}
+  .cc-hours{font-size:10.5px;color:var(--muted);font-weight:700}
+  .cc-name{font-size:13px;font-weight:800;line-height:1.3}
+  .cc-desc{font-size:11.5px;color:#39414e;line-height:1.45}
+  .cc-foot{display:flex;justify-content:space-between;align-items:center;margin-top:2px}
+  .cc-badge{font-size:10px;font-weight:700;color:var(--muted)}
+  .cc-md{font-size:10.5px;font-weight:700}
+
+  /* Verdict + refs */
+  .verdict{margin-top:20px;padding:18px 20px;border-radius:16px;background:linear-gradient(180deg,#fff, #fbf7f9);border:1px solid var(--lg-soft);box-shadow:var(--shadow)}
+  .verdict h2{margin:0 0 4px;font-size:16px;color:var(--lg)}
+  .verdict .v-lead{font-size:13.5px;font-weight:700;margin:0 0 12px}
+  .vgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  @media(max-width:780px){.vgrid{grid-template-columns:1fr}}
+  .vcard{border:1px solid var(--line);border-radius:12px;padding:12px 13px;background:#fff;font-size:12.5px}
+  .vcard h4{margin:0 0 5px;font-size:13px}
+  .vcard .no{color:#b91c1c;font-weight:800}
+  .vcard .yes{color:#15803d;font-weight:800}
+
+  .refs{margin-top:20px}
+  .refs .card-h h2{font-size:15px}
+  .rbody{padding:8px 10px 16px}
+  .refgrp{border:1px solid var(--line);border-radius:12px;margin:10px;overflow:hidden}
+  .refgrp summary{cursor:pointer;padding:11px 14px;font-weight:800;font-size:13px;background:#f7f8fb;list-style:none;display:flex;justify-content:space-between;align-items:center}
+  .refgrp summary::-webkit-details-marker{display:none}
+  .refgrp summary .cnt{font-size:11px;color:var(--muted);font-weight:700}
+  .refgrp[open] summary{border-bottom:1px solid var(--line)}
+  .refgrp ul{margin:0;padding:10px 14px 12px 28px}
+  .refgrp li{margin:6px 0;font-size:12.5px}
+  .refgrp li .yr{font-size:10.5px;color:#fff;background:var(--base);border-radius:5px;padding:1px 6px;margin-right:6px;font-weight:700}
+
+  .foot{margin-top:26px;text-align:center;color:var(--muted);font-size:11.5px}
+  kbd{background:#f1f3f7;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 5px;font-size:11px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="ttl">
+      <span class="badge">SW College · AI Native SW Engineering</span>
+      <h1 style="margin-top:8px">AI Native SW Expert Roadmap<span class="v2">v2</span></h1>
+      <p class="sub">SW 전문가 직군 육성체계 개편 · 1차 설계안 (v2) — 현업 인터뷰 8건 + 외부 현황(2026) + <b>중급 나노디그리 8과정</b></p>
+      <p class="lead">핵심 명제 : <b>WHAT(전문가 영역·V모델 골격)은 불변, HOW(일하는 방식)는 전환된다.</b>
+      3대 전문가(Architect·SDET·Security)는 유지하되 <i>AI 활용 HOW</i>를 채우고, Harness·컨텍스트·토큰효율은 별도 직군이 아닌 <b>전원 공통역량</b>으로 깔며, 검증·DoD·도메인·SW공학 기본기를 토대로 재설계한다.</p>
+    </div>
+    <div class="meta">
+      작성 : 2026-06-15<br>SW 공학연구소(SW College)<br>
+      <span style="color:var(--lg);font-weight:700">셀·헤더·과정카드 클릭 → 상세</span>
+    </div>
+  </header>
+
+  <!-- 6 Principles -->
+  <div class="principles" id="principles"></div>
+
+  <div class="layout">
+    <!-- ===== Matrix ===== -->
+    <section class="card matrix-card">
+      <div class="card-h">
+        <h2>육성체계 매트릭스 — 레벨 × 트랙</h2>
+        <span class="hint">이미지 틀(레벨·인증·트랙) 충실 + v2 결론 반영</span>
+      </div>
+      <div class="matrix">
+        <div class="grid" id="grid">
+          <!-- header row -->
+          <div class="ch l">교육 레벨</div>
+          <div class="ch">인증</div>
+          <div class="trk arch" data-type="track" data-key="architect">Architect<small>선행설계 · 구조·의도 정의</small><span class="more">＋</span></div>
+          <div class="trk sdet" data-type="track" data-key="sdet">SDET<small>DoD · 검증 · 게이팅</small><span class="more">＋</span></div>
+          <div class="trk sec"  data-type="track" data-key="security">Security<small>공방 운영 · Security-for-AI</small><span class="more">＋</span></div>
+
+          <!-- 전파 band -->
+          <div class="lvl prop" data-type="level" data-key="propagate"><span>전파</span><span class="lv-en">PROPAGATE</span></div>
+          <div class="cert">전문가 인증 후<small>지속 자격</small></div>
+          <div class="band prop" style="grid-column:3/6" data-type="level" data-key="propagate">
+            <span class="bk">전 트랙 공통</span>컨퍼런스 참가·발표 지원 + 전파 교육(사내 전파 채널) + <b style="margin-left:3px">리텐션</b>(조직에 하네스 지속 구축·배포)</div>
+
+          <!-- 전문가 -->
+          <div class="lvl exp" data-type="level" data-key="expert"><span>전문가</span><span class="lv-en">EXPERT · L4</span><span class="tag">조직 단위</span></div>
+          <div class="cert">전문가<small>(조직 단위 인증)</small></div>
+          <div class="cell exp" data-type="track" data-key="architect"><span class="ce-tag">Architect</span>현업과제 수행(하네스) + 팀 배포 + 인증심사</div>
+          <div class="cell exp" data-type="track" data-key="sdet"><span class="ce-tag">SDET</span>현업과제 수행(하네스) + 팀 배포 + 인증심사</div>
+          <div class="cell exp" data-type="track" data-key="security"><span class="ce-tag">Security</span>현업과제 수행(하네스) + 팀 배포 + 인증심사</div>
+
+          <!-- 중급 -->
+          <div class="lvl inter" data-type="level" data-key="intermediate"><span>중급</span><span class="lv-en">INTERMEDIATE · L3</span><span class="tag">개인 단위</span></div>
+          <div class="cert">AX 인증 (개인)<small>≈ Function Architect</small></div>
+          <div class="cell inter" data-type="course-track" data-key="arch"><span class="ce-tag">Architect</span>나노디그리 2과정 (AR-01·02) <span style="opacity:.6">→ 카드</span></div>
+          <div class="cell inter" data-type="course-track" data-key="sdet"><span class="ce-tag">SDET</span>나노디그리 2과정 (SD-01·02) <span style="opacity:.6">→ 카드</span></div>
+          <div class="cell inter" data-type="course-track" data-key="sec"><span class="ce-tag">Security</span>나노디그리 2과정 (SE-01·02) <span style="opacity:.6">→ 카드</span></div>
+
+          <!-- 공통역량 band -->
+          <div class="lvl inter" style="background:#fff;border:1px dashed var(--band);color:var(--band-ink)" data-type="course-track" data-key="common"><span style="font-size:11px">▸ 공통역량</span><span class="lv-en">중급 관통</span></div>
+          <div class="cert" style="border-style:solid;border-color:var(--band);background:var(--band-t);color:var(--band-ink)">신규 세미나<small>+ 실습과제</small></div>
+          <div class="band common" style="grid-column:3/6" data-type="course-track" data-key="common">
+            <span class="bk">공통 나노디그리</span>CC-01 컨텍스트·하네스·토큰효율 · CC-02 오케스트레이션·PM형 협업 <span style="opacity:.6;margin-left:4px">→ 카드</span></div>
+
+          <!-- 초급 -->
+          <div class="lvl found" data-type="level" data-key="foundation"><span>초급</span><span class="lv-en">FOUNDATION</span></div>
+          <div class="cert">AI 역량 인증<small>검증 + 커맨드 문제</small></div>
+          <div class="band boot" style="grid-column:3/6" data-type="level" data-key="foundation">
+            <span class="bk">AI Native SW Bootcamp</span>코어 + 기초 모듈 (전 트랙 공통) · 명세·검증·AI협업·토큰효율 입문</div>
+
+          <!-- 토대 -->
+          <div class="base" data-type="common" data-key="foundationbar">
+            토대 (전 레벨 관통) — <small>SW공학 · 도메인 · 보안 기초(Secure-by-default) · 네트워크 / OS / 플랫폼(도커)</small></div>
+        </div>
+
+        <div class="gov" data-type="common" data-key="governance">
+          <b>거버넌스 / 운영 조직</b> (인증 직군 아님) — 토큰·예산 배분 · 스킬/기능 중복 제거 · 사용법 교육·전파(Enablement). <b>과도기적</b>(성숙 시 축소)이며 <b>본부 규모별 차등</b> 적용. <span style="color:var(--muted)">＋ 클릭</span>
+        </div>
+
+        <!-- cert ladder flow -->
+        <div class="flow">
+          <span style="font-weight:800;color:var(--ink)">인증 래더</span>
+          <span class="step">AI 역량 인증</span><span class="arr">→</span>
+          <span class="step">AX (개인·L3)</span><span class="arr">→</span>
+          <span class="step">전문가 (조직·L4)</span><span class="arr">→</span>
+          <span class="step">전파·리텐션</span>
+          <span style="margin-left:auto">※ 중급 <b style="color:var(--ink)">나노디그리 이수</b> → 전문가 도전 · AX ↔ AI 역량 인증 <b style="color:var(--ink)">동시 취득</b></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Detail panel ===== -->
+    <aside class="card panel">
+      <div class="card-h">
+        <h2 id="p-title">상세 보기</h2>
+        <button id="refbtn" class="hint" style="cursor:pointer;border:1px solid var(--line);background:#fff;border-radius:8px;padding:4px 9px;font-weight:700">레퍼런스 ↓</button>
+      </div>
+      <div class="pbody" id="pbody">
+        <div class="empty">
+          <div class="big">◧</div>
+          왼쪽 <b>트랙 헤더 · 레벨 · 셀 · 원칙 칩 · 과정 카드</b>를 클릭하면<br>여기에 상세 내용이 표시됩니다.
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ===== Intermediate Nano-Degrees ===== -->
+  <section class="card courses" id="courses">
+    <div class="card-h">
+      <h2>중급 나노디그리 과정 (Intermediate Nano-Degrees)</h2>
+      <span class="hint">공통 2 + 트랙별 2×3 · 교수설계 = Backward Design·Bloom·Gagné·Merrill·CBE</span>
+    </div>
+    <div class="cbody">
+      <div class="cnote">전문가 인증 <b>도전 자격</b> = <b>공통 2과정(CC-01·CC-02)</b> + <b>해당 트랙 2과정</b> 이수 &nbsp;·&nbsp; 카드 클릭 → 우측 패널 상세 / <span style="color:var(--muted)">MD ↗ 로 과정 설계서(교수설계 문서) 열람</span></div>
+      <div class="cgroups" id="cgroups"></div>
+    </div>
+  </section>
+
+  <!-- ===== Harness verdict ===== -->
+  <section class="verdict" id="harness">
+    <h2>Harness 논점 — SW College 최종 판단</h2>
+    <p class="v-lead">"공통 역량(개인화기) + 도메인결합 전문기능(시스템 설계) + 거버넌스/운영 조직 — 단, 셋 다 <span style="color:var(--lg)">'독립 전문가 직군'은 아니다.</span>"</p>
+    <div class="vgrid">
+      <div class="vcard"><h4>① 공통 역량 층</h4>컨텍스트·<b>토큰효율(커맨드化)</b>·스킬·피드백 루프는 <b>모든 개발자의 기본기</b>. → 중급 공통 나노디그리(CC-01·02).<br><span style="color:var(--muted)">Fowler "practice, <span class="no">not a role</span>"</span></div>
+      <div class="vcard"><h4>② 전문 기능 층</h4>E2E 오케스트레이션·게이팅·IDP는 전담 전문성을 요하나 <b>Arch/SDET/Security 도메인 위에 얹히는 능력</b>. → 전문가 셀의 현업과제(하네스).</div>
+      <div class="vcard"><h4>③ 거버넌스 조직</h4>토큰·예산·중복제거·교육 담당 운영 조직은 <span class="yes">필요</span>하되 <b>인증 직군 아님</b> · 과도기적(성숙 시 축소).<br><span style="color:var(--muted)">Nestr "↔ governance"</span></div>
+    </div>
+  </section>
+
+  <!-- ===== References ===== -->
+  <section class="card refs" id="refsec">
+    <div class="card-h">
+      <h2>외부 레퍼런스 — 2026년 현황</h2>
+      <span class="hint">insane-search / WebSearch 기반 · 2026-01 이후</span>
+    </div>
+    <div class="rbody" id="rbody"></div>
+  </section>
+
+  <p class="foot">AI Native SW Expert Roadmap v2 · SW 공학연구소(SW College) · 2026-06-15 — 원천 설계: <code>AI Native SW Expert Roadmap.md</code> · 중급 과정: <code>중급 나노디그리/*.md</code></p>
+</div>
+
+<script>
+/* ---------- DATA ---------- */
+const PRINCIPLES=[
+ {n:"P1",t:"WHAT 불변, HOW 변화",b:"V모델·역할 골격은 유지. 각 단계의 역할이 '작업 수행자 → 기준 정의자 / 오케스트레이터 / 리뷰어'로 전환된다. 최종 책임의 도장은 사람이 찍는다.",ev:["내부 : “소프트웨어 공학 틀은 안 바뀜, 바뀐 건 HOW”(PO 리더(A)) · “세 영역은 변함없다”(보안 책임(B))","외부 : arXiv 3축 Intent·Collaboration·Verification / Spec-Driven Development"]},
+ {n:"P2",t:"Back to the Basic + 실무형",b:"SW공학·도메인 기본기가 결과를 좌우한다. AI 시대의 희소역량은 코드 생산이 아니라 ‘판단력(judgment)’이다.",ev:["내부 : “엔지니어링 역량 높을수록 AI도 잘한다”(요구공학 책임(G)) · 5과목 기본기(임베디드 리더(C))","외부 : Thoughtworks Radar v34 ‘fundamentals 회귀로 cognitive debt 대응’ / arXiv ‘scarce capability = judgment’"]},
+ {n:"P3",t:"검증·DoD가 생존조건",b:"AI는 “테스트 통과를 위해 수단·방법을 안 가린다”. 비판적 검증·DoD·게이팅을 전 레벨에 필수 탑재한다.",ev:["내부 : “DoD 정의가 SDET의 시작, 리뷰가 제일 중요”(PO 리더(A))","외부 : GitHub Spec Kit(Specify→Plan→Tasks→Implement) / AI fluency 베이스라인 4질문"]},
+ {n:"P4",t:"Harness = 공통역량 + 거버넌스 (독립 직군 ✕)",b:"하네스/AI 엔지니어링은 별도 전문가 직군이 아니라 ① 전원 공통역량 ② 도메인 위에 얹히는 전문기능 ③ 과도기적 거버넌스 조직이다.",ev:["내부 : “무슨 전문성? 개발자가 다 한다”(보안 책임(B)) · “AI는 개인화기”(로봇제어 책임(I))","외부 : Fowler/Böckeler ‘practice, not a specialist role’ / Nestr ‘harness ↔ organizational governance’"]},
+ {n:"P5",t:"토큰·컨텍스트 효율 = 새 기본기",b:"추론 최소화·커맨드化가 비용 생존선이다. 자연어·추론 과다(아키텍트 챗 모드)가 토큰을 가장 많이 먹는다.",ev:["내부 : “하네스 구축하면 하루 만에 토큰 소진”(임베디드 리더(C)) · “커맨드化로 추론↓”(보안 책임(B))","외부 : FinOps-for-AI ‘Inference Bill Shock’, cost-per-token / FinOps X 2026 ‘Token Panic’"]},
+ {n:"P6",t:"본부 규모별 차등 + 주니어 사다리",b:"‘역할을 떼어 전담조직화’는 소규모 본부에서 실패(전담조직 분리 실패 사례). 대규모는 IDP/거버넌스 조직, 소규모는 인프라 개방+공학연 지원. 주니어 체득 경로를 별도 설계.",ev:["내부 : 요구공학 전담조직 분리 시도 실패(임베디드 리더(C)) · “인턴 안 뽑는 모순”(거버넌스 책임(D))","외부 : SSRN ‘Broken Ladder’(주니어 고용 −9~10%) / WEF Future of Jobs 2026"]},
+];
+
+const TRACKS={
+ architect:{title:"Architect",sub:"“코드 작성자”에서 “의도·구조의 정의자”로",
+  roles:["선행 설계자 — 바이브코딩 스파게티화 방지","제약·컨텍스트 주입자","옵션 판단·게이트키퍼 (무엇을 더하고 뺄지)","에이전트 오케스트레이션 설계자"],
+  asis:["“선행 설계가 돼야 하고 그건 아키텍처가 해줘야”(거버넌스 책임(D))","“설계 합의는 사람, ADR↔Code 일치율은 AI로 점수화”(플랫폼 아키텍트(E))","“기존 아키텍트가 AI를 제일 잘 쓴다 — 구조적으로 쓰니까(스트럭처 이해=컨텍스트 강점)”(임베디드 리더(C))","한계 : “구조가 다른 신규 프로젝트엔 에이전트 재사용 불가 → 챗 모드 회귀”(보안 책임(B))"],
+  tobe:["Karpathy : “아이언맨 로봇이 아니라 슈트 — 부분 자율·자율성 슬라이더”","Sean Grove(OpenAI) : “코드는 가치의 10~20%, 나머지는 명세”","2026 : Spec-Driven Development(GitHub Spec Kit·AWS Kiro·Cursor)가 산출물을 코드→명세·계획·ADR로 이동"],
+  comp:["정형 명세","아키텍처·시스템 분해","제약 표현력","옵션 판단력","아키텍처 적합성 하네스(fitness function)"],
+  how:["SW공학 기본기 재강화(설계·아키텍처·정형 명세 = 불변의 진리)","경험·맥락은 교육이 아니라 현업 과제로 — “육성한다는 개념을 버려야”(플랫폼 아키텍트(E))","시프트-레프트 : 구현 특화 개발자를 앞단(설계·요구)으로","주의 : 인증 수료자 다수가 실제 아키텍트 역할 안 함 → 선발·활용 연계 재설계"],
+  courses:["AR-01","AR-02"]},
+ sdet:{title:"SDET",sub:"“테스트 수행자”에서 “기준 정의자·최종 게이트키퍼”로",
+  roles:["DoD / Exit Criteria 정의자","AI 산출물 검증·리뷰어 (누락·할루시네이션·부정행위 적발)","테스트 설계자 (전략·하네스·피드백 루프)","게이팅 자동화 에이전트 설계자"],
+  asis:["“DoD 정의가 SDET의 시작, 리뷰가 제일 중요”(PO 리더(A))","“비용 때문에 못 하던 V모델·뮤테이션 테스트를 1인이 수분 내”(로봇제어 책임(H))","“검증의 핵심은 CICD/CT 자동화와 피드백 루프 — 제품·피처 레벨 CT가 중요”(임베디드 리더(C))"],
+  tobe:["Kent Beck : “지니가 테스트를 비활성화·삭제하면 부정행위 신호 … 코드·복잡도·테스트·커버리지를 챙겨라”","Karpathy : “생성–검증 루프를 매우 빠르게 유지하라”","2026 : QA→SDET ‘결함 적발→예방(quality engineering at scale)’ · Agentic Testing(의도 기반, Selenium/Playwright 위) · “자동화를 만드는 사람은 자동화할 수 없다”"],
+  comp:["테스트 디자인(어떤 기준으로)","테스트 하네스·CT 파이프라인","피드백 루프","게이팅 자동화 에이전트","표준(ISO 29119) 기반 실무"],
+  how:["DoD/게이팅 사고를 전 개발자 기본 탑재 → SDET 전문가는 문화·프로세스 리딩","“정신적으로 남아 있어야 — 품질 볼 사람이 사라지지 않게”(PO 리더(A))","테스트 환경·CT·피드백 루프 구축이 어렵고 핵심"],
+  courses:["SD-01","SD-02"]},
+ security:{title:"Security",sub:"“사후 점검자”에서 “AI 시대 공방(攻防) 운영자”로",
+  roles:["Security-for-AI 설계자 (인젝션·RAG 포이즈닝·적대적 공격 위협모델링·SDL)","AI-for-Security 운영자 (자동 탐지·패치·리그레션)","개발자 보안 역량 전파자 (시큐어 코딩·가드레일·ML-BOM)"],
+  asis:["“AI 기능 없는 자사 제품은 없다 → Security-for-AI 디폴트”(보안 거버넌스 리더(F))","“창과 방패 — 자동 패치 + 선제 리스트업 둘 다”","“표준이 기술을 못 따라옴 → 개발자 보안 과정이 전문가 과정보다 우선”","“Security·SDET는 개발 전 과정에 걸쳐 있다 → 게이팅이 워크플로우 전반에 내장”(보안 책임(B))"],
+  tobe:["Simon Willison : “치명적 3요소 — 프라이빗 데이터 + 비신뢰 콘텐츠 + 외부 통신”","Google Big Sleep / XBOW : 자율 에이전트가 HackerOne 1위","2026 : OWASP Top 10 for LLM Apps + Agentic Apps · MITRE ATLAS · AI용 STRIDE · 개발자 주도 위협모델링"],
+  comp:["AI 공격표면·위협모델링","시큐어 코딩","가드레일·SBOM/ML-BOM","보안 특화 하네스(도메인 결합)"],
+  how:["보안을 공통 필수로 — 전 과정에 CQT 기본 탑재(보안 거버넌스 리더(F))","개발자 과정 먼저, 전문가 과정은 단계적(표준 미정립)","“원래 일이 보안이어야 하고 하네스는 배워서 습득” = 도메인 × 하네스 결합형"],
+  courses:["SE-01","SE-02"]},
+};
+
+const LEVELS={
+ foundation:{title:"초급 — AI Native SW Bootcamp",sub:"FOUNDATION · 전 개발자 공통기, ‘깔리는’ 실무형",color:"var(--found)",
+  cert:"AI 역량 인증 — 코딩 가능 여부 ✕ / 검증 문제 + 커맨드·시킬 수 있는 문제(명세·오케스트레이션·토큰효율) ○",
+  blocks:[["구성(코어+기초 모듈)",["SW공학 5과목 토대(SW공학·디자인패턴·네트워크·OS/플랫폼·보안)","WHAT 정의력(명세) — AI가 할 일/안 할 일/제약까지","AI 협업·하네스 기본기(컨텍스트·토큰효율·스킬.md·피드백 루프)","검증·DoD 사고 입문","플랫폼 기초(도커·에이전트 네트워크 통신)"]],
+  ["주니어 사다리 장치",["AI 보조 제한 + 손코딩 + 코드 추적·구술 평가 구간 의도 배치(‘피로 쓴 규칙’ 체득)","arXiv Phase 1 ‘restrict AI on core skill-building’과 정합"]],
+  ["외부 정합",["arXiv 4단계 커리큘럼 Phase 1~2 · AWS AI&ML Scholars ‘Challenge→Nanodegree’ · Andela AI Academy"]]]},
+ intermediate:{title:"중급 — 역할별 심화 + 공통 워크플로우",sub:"INTERMEDIATE · L3 · 개인 단위",color:"var(--inter)",
+  cert:"AX 인증(개인·L3) — “내 일을 자동화” ≈ Function Architect / PM역량인증. AI 역량 인증과 중복 → 동시 취득(식스시그마 유사)",
+  blocks:[["나노디그리 구성(↓ 중급 나노디그리 섹션 참조)",["공통 2과정 : CC-01 컨텍스트·하네스·토큰효율 / CC-02 오케스트레이션·PM형 협업","트랙별 2과정 : Architect(AR-01·02) · SDET(SD-01·02) · Security(SE-01·02)","이수 시 → 해당 트랙 전문가 인증 도전 자격"]],
+  ["공통역량 밴드(신규 세미나+실습)",["흩어진 워크플로우를 직접 ‘연결’해 보는 실습","Guides(AGENTS.md·제약문서) + Sensors(테스트·평가 루프) 구성","토큰 예산 내 커맨드化 · 멀티에이전트 역할 분해"]],
+  ["외부 정합",["arXiv Phase 3(human–AI teams·orchestration) · Google ‘5-Day AI Agents Intensive’"]]]},
+ expert:{title:"전문가 — 조직 단위 현업과제",sub:"EXPERT · L4 · 조직 단위",color:"var(--exp)",
+  cert:"전문가(조직 단위) — 리텐션형. 조직에 효용을 배포·심사. ‘정말 필요한 사람’에게 가도록 선발·활용 연계",
+  blocks:[["수행(전 트랙 공통)",["현업과제 수행(하네스) + 팀 배포 + 인증심사","각 전문가가 자기 도메인 위에 하네스 구축·배포·전파"]],
+  ["도메인 × 하네스 결합",["Architect : 설계 일치율·아키텍처 적합성(fitness function)","SDET : 게이팅·CT 피드백 루프","Security : 위협모델링·자동 패치 가드레일","(Fowler : 하네스 ↔ 아키텍처·테스트·플랫폼 연결)"]],
+  ["외부 정합",["arXiv Phase 4(repository-scale agentic + public defense) · MS ‘AI Agent Builder Associate’급 프로덕션 에이전트 인증"]]]},
+ propagate:{title:"전파 — 확산과 리텐션",sub:"PROPAGATE · 전문가 이후",color:"var(--prop)",
+  cert:"전문가 인증 후 지속 자격",
+  blocks:[["전파",["컨퍼런스 참가·발표 지원","전파 교육(사내 전파 채널)로 사내 환류"]],
+  ["리텐션",["조직에 하네스를 지속 구축·배포하는 과제 수행·심사(인증 유지·갱신)"]]]},
+};
+
+const COMMON={
+ common:{title:"공통역량 밴드",sub:"중급, 3트랙 관통 — 이미지의 PM·Harness 컬럼이 흡수된 층",color:"var(--band-ink)",
+  cert:"신규 세미나 + 실습과제 (CC-01·CC-02)",
+  blocks:[["전 개발자 베이스라인 역량",["AI 협업·하네스 기본기(토큰/컨텍스트 효율, 커맨드化)","PM형 오케스트레이션(에이전트에 일 시키고 산출물 판단·최종 책임)","E2E 워크플로우 연결(Guides+Sensors)","WHAT 정의력 · 검증·DoD 사고 · Secure-by-default · 플랫폼/네트워크/OS 기초 · T자형 · 추상화·시프트레프트"]],
+  ["왜 별도 직군이 아닌가",["“PM형 역량은 특정 전문가가 아니라 전 개발자의 일하는 방식”(거버넌스 책임(D))","외부 : ‘AI 엔지니어링 = 역할이자 동시에 모든 개발자의 베이스라인 스킬’"]],
+  ["arXiv 9역량 매핑",["C1 명세(WHAT) · C2/C3 검증 · C5/C8 오케스트레이션·협업 · C6 시스템사고 · C7 보안 · C4/C9 메타인지·지속학습(전파)"]]]},
+ foundationbar:{title:"토대 (전 레벨 관통)",sub:"불변의 토대 — 모든 레벨·트랙을 떠받친다",color:"var(--base)",
+  cert:"—",
+  blocks:[["구성",["SW공학(설계·요구공학·테스트·구조화 = 불변의 원칙)","도메인 지식(실현 가능한 사양·제약의 원천, 체득으로만)","보안 기초(Secure-by-default)","네트워크 / OS / 플랫폼(도커 등 컨테이너)"]],
+  ["근거",["“엔지니어링 역량 높을수록 AI도 잘한다”(요구공학 책임(G))","“에이전트는 결국 네트워크로 통신한다”(임베디드 리더(C))","Thoughtworks Radar v34 : AI 복잡도 → fundamentals 회귀"]]]},
+ governance:{title:"거버넌스 / 운영 조직 (인증 직군 아님)",sub:"필요하되 과도기적 · 본부 규모별 차등",color:"var(--lg)",
+  cert:"인증 대상 아님 (운영 조직)",
+  blocks:[["역할",["토큰·예산 배분","스킬·기능 중복 제거","사용법 교육·전파(Enablement) — “90%가 에이전트 사용법조차 모른다”(보안 책임(B))"]],
+  ["성격",["AI 전문성 조직이 아니라 거버넌스/오퍼레이팅 조직(보안 책임(B) 사내 AI 거버넌스 조직 사례)","시스템 성숙 시 축소되는 과도기적 역할"]],
+  ["본부 규모별 차등",["대규모·B2B 본부 : 전담 거버넌스·플랫폼(IDP) 조직 — Gartner 2026년 SW조직 80% 플랫폼팀","소규모·연구 본부 : 강제 조직화 ✕ → 인프라 개방 + 관심 인재 모티베이션 + 공학연·외부기관 지원","교훈 : ‘역할을 떼어 전담조직화’는 소규모 본부에서 실패(전담조직 분리 실패 사례)"]]]},
+};
+
+const COURSES=[
+ {code:"CC-01",grp:"common",track:"공통",type:"공통 필수",hours:"32h",badge:"Context & Harness Practitioner",
+  file:"CC-01 컨텍스트·하네스 엔지니어링 & 토큰 효율.md",
+  name:"컨텍스트·하네스 엔지니어링 & 토큰 효율",
+  desc:"컨텍스트 큐레이션 · 토큰 예산(커맨드化) · 피드백 루프(하네스)를 구성하는 전원 공통 기본기.",
+  def:"AI가 ‘한 번에 제대로’ 일하도록 컨텍스트를 큐레이션하고 토큰을 예산처럼 운영하며 자가교정 피드백 루프(하네스)를 구성한다.",
+  obj:["Guides(AGENTS.md·제약문서) 구성","토큰 낭비 진단·커맨드化","챗 vs 커맨드 비용·정확도 평가","Sensors(피드백 루프) 설계"],
+  mod:["컨텍스트 엔지니어링 기초","토큰 경제학 & 커맨드化","하네스 구성(Guides+Sensors)","통합 프로젝트"],
+  dod:"동일 과제 토큰 ≥40% 절감 또는 성공률 유의 향상 + 피드백 루프 자동 교정 1회 이상 시연",
+  cert:"전 트랙 공통 선수 (전문가 도전 필수 2과목 중 하나)"},
+ {code:"CC-02",grp:"common",track:"공통",type:"공통 필수",hours:"32h",badge:"AI Orchestration & Output Steward",
+  file:"CC-02 에이전트 오케스트레이션 & PM형 협업.md",
+  name:"에이전트 오케스트레이션 & PM형 협업 (E2E)",
+  desc:"에이전트 조율·산출물 판단(PM형)과 흩어진 작업의 E2E 연결을 설계하는 전원 공통 역량.",
+  def:"개발자가 에이전트를 조율하고 산출물을 판단·책임지는 PM형 역량과 멀티에이전트 E2E 워크플로우 설계 역량을 기른다.",
+  obj:["계획/생성/평가 에이전트로 분해","핸드오프 단절 지점 식별","산출물 채택/반려(게이트)","E2E 워크플로우 연결"],
+  mod:["PM형 마인드셋","작업 분해 & 멀티에이전트","E2E 연결 & 핸드오프","통합 프로젝트"],
+  dod:"E2E 워크플로우 1회 완주 + 게이트에서 불량 산출물 1건 이상 반려 시연",
+  cert:"전 트랙 공통 선수 (전문가 도전 필수 2과목 중 하나)"},
+ {code:"AR-01",grp:"arch",track:"Architect",type:"트랙 전용",hours:"40h",badge:"Spec-Driven Architect",
+  file:"AR-01 명세·의도 공학 (Spec-Driven Development).md",
+  name:"명세·의도 공학 (Spec-Driven Development)",
+  desc:"정형 명세·의도·제약(할 일/안 할 일) 작성 + 명세→계획→태스크 분해(SDD).",
+  def:"AI가 정확히 구현하도록 정형 명세·의도·제약을 쓰고 Spec→Plan→Tasks로 분해하는 역량을 기른다.",
+  obj:["WHAT/제약/비목표 정형 명세","모호·충돌 요구 정제(CSRS→SRS)","명세-구현 추적성 점검","Spec→Plan→Tasks 파이프라인 구성"],
+  mod:["의도·명세의 기초","정형 명세 작성","Spec-Driven Development","추적성 & ADR 연계"],
+  dod:"명세만으로 타인/AI가 동일 의도 재현 + 추적성 100% 매핑",
+  cert:"Architect 전문가 도전 필수 (공통 2 + AR-01·AR-02)"},
+ {code:"AR-02",grp:"arch",track:"Architect",type:"트랙 전용",hours:"40h",badge:"Architecture-as-Context Designer",
+  file:"AR-02 선행 아키텍처 & 제약·컨텍스트 설계.md",
+  name:"선행 아키텍처 & 제약·컨텍스트 설계",
+  desc:"선행 설계 + 구조·레거시·비기능 제약 주입(아키텍처=컨텍스트) + ADR↔Code 일치율.",
+  def:"바이브코딩 스파게티화를 막는 선행 설계와 제약 컨텍스트 주입, 적합성 함수로 드리프트를 감지하는 역량을 기른다.",
+  obj:["시스템 모듈/관심사 분해","레거시·HW·비기능 제약 명문화","ADR↔Code 일치율 측정·판단","적합성 함수(fitness function) 설계"],
+  mod:["선행 설계의 귀환","아키텍처=컨텍스트","ADR & 일치율","적합성 함수"],
+  dod:"일치율 측정 자동화 + 적합성 함수 위반 1건 이상 검출",
+  cert:"Architect 전문가 도전 필수 (공통 2 + AR-01·AR-02)"},
+ {code:"SD-01",grp:"sdet",track:"SDET",type:"트랙 전용",hours:"40h",badge:"AI Verification & DoD Engineer",
+  file:"SD-01 AI 검증 & DoD 엔지니어링.md",
+  name:"AI 검증 & DoD 엔지니어링",
+  desc:"DoD/Exit Criteria 설계 + AI 산출물의 누락·할루시네이션·부정행위 비판검증.",
+  def:"‘끝났다’의 기준(DoD/Exit Criteria)을 설계하고 AI 산출물의 부정행위(테스트 비활성화 등)를 적발하는 검증 역량을 기른다.",
+  obj:["DoD·Exit Criteria 정의","부정행위 신호(비활성화 테스트 등) 탐지","도메인 기반 크리틱·채택/반려","빠른 생성–검증 루프 설계"],
+  mod:["DoD/Exit Criteria 설계","AI 산출물 비판검증","신뢰 보정 & 크리틱","생성–검증 루프"],
+  dod:"심어둔 결함·비활성화 테스트 전부 적발 + DoD 기반 채택/반려 판정 정확",
+  cert:"SDET 전문가 도전 필수 (공통 2 + SD-01·SD-02)"},
+ {code:"SD-02",grp:"sdet",track:"SDET",type:"트랙 전용",hours:"40h",badge:"Test Harness & Gating Engineer",
+  file:"SD-02 테스트 하네스·CT 피드백 루프 & 게이팅 자동화.md",
+  name:"테스트 하네스·CT 피드백 루프 & 게이팅 자동화",
+  desc:"CT 피드백 루프·테스트 하네스 설계 + 산출물 게이팅 자동화 에이전트 구축.",
+  def:"‘틀리면 또 돌리는’ CT 피드백 루프와 게이팅 자동화 에이전트로 하네스가 자가교정되게 구성하는 역량을 기른다.",
+  obj:["테스트 전략·환경(하네스) 설계","피드백 루프 단절·지연 진단","게이트 기준 자동 평가","게이팅 에이전트·뮤테이션/구조 테스트 구성"],
+  mod:["테스트 디자인 & 하네스","CT 피드백 루프","게이팅 자동화 에이전트","고비용 검증의 대중화"],
+  dod:"게이팅 에이전트 불량 자동 차단 + 피드백 루프 자가교정 + 뮤테이션 점수 보고",
+  cert:"SDET 전문가 도전 필수 (공통 2 + SD-01·SD-02)"},
+ {code:"SE-01",grp:"sec",track:"Security",type:"트랙 전용",hours:"40h",badge:"Security-for-AI Threat Modeler",
+  file:"SE-01 Security-for-AI 위협모델링 & SDL.md",
+  name:"Security-for-AI : 위협모델링 & SDL",
+  desc:"AI 공격표면(인젝션·RAG 포이즈닝·적대적) 위협모델링 + AI용 SDL·보안요구 재정의.",
+  def:"AI 탑재 제품의 다른 공격 표면을 STRIDE/ATLAS로 모델링하고 SDL·게이트를 워크플로우에 내장하는 역량을 기른다.",
+  obj:["STRIDE/ATLAS 위협모델링 적용","인젝션·포이즈닝·치명적 3요소 분석","OWASP LLM/Agentic 위험 평가","AI용 SDL·게이트 설계"],
+  mod:["AI 공격 표면","위협모델링 재정의","OWASP LLM/Agentic Top10","AI용 SDL & 게이트"],
+  dod:"치명적 3요소 식별 + 프롬프트 인젝션 1건 이상 재현·완화 + SDL 게이트 정의",
+  cert:"Security 전문가 도전 필수 (공통 2 + SE-01·SE-02)"},
+ {code:"SE-02",grp:"sec",track:"Security",type:"트랙 전용",hours:"40h",badge:"AI-for-Security Operator & Enabler",
+  file:"SE-02 AI-for-Security & Secure-by-default 전파.md",
+  name:"AI-for-Security & Secure-by-default 전파",
+  desc:"AI 자동 탐지·패치·리그레션(창과 방패) 운영 + Secure-by-default 전파(Enablement).",
+  def:"AI로 취약점을 선제 탐지·자동 패치·검증하고 보안을 개발자 수준으로 내려보내는 전파 역량을 기른다.",
+  obj:["AI 취약점 선제 탐지","자동 패치 부작용·리그레션 분석","SBOM/ML-BOM·공급망 위험 평가","가드레일+개발자 교육 설계·전파"],
+  mod:["AI-for-Security 개관","자동 탐지·패치·리그레션","공급망·SBOM/ML-BOM","Secure-by-default 전파"],
+  dod:"자동 탐지·패치가 실제 취약점 1건 이상 처리 + 리그레션 미발생 + 개발자 가드레일 배포",
+  cert:"Security 전문가 도전 필수 (공통 2 + SE-01·SE-02)"},
+];
+
+const REFS=[
+ {g:"A. 빅테크/SW 회사 실제 교육 체계 (레벨·트랙·인증)",items:[
+  ["2026","Andela AI Academy — 2026년까지 15,000명 양성, GitHub Copilot 출발 다중 트랙","https://www.prnewswire.com/news-releases/andela-scales-ai-academy-to-support-enterprise-upskilling-and-ai-fluent-talent-pipelines-302683367.html"],
+  ["2026","AWS AI & ML Scholars 2026 — Challenge→Nanodegree, 트랙: AI Programmer/Agentic AI/Agent Developer","https://aws.amazon.com/blogs/training-and-certification/aws-ai-ml-scholars-is-open-for-2026-get-started-on-your-ai-learning-journey/"],
+  ["2026","Microsoft Certified: AI Agent Builder Associate (AB-620, 2026-06 라이브)","https://techcommunity.microsoft.com/blog/skills-hub-blog/the-ai-job-boom-continues-build-the-skills-that-move-business-forward/4494139"],
+  ["2026","JPMorgan — 65,000 엔지니어 AI 툴 사용을 인사평가에 연동","https://letsdatascience.com/blog/jpmorgan-tracks-65000-engineers-ai-usage-performance-reviews"],
+  ["2026","AI fluency = 베이스라인(채용 4질문 中 ‘산출물 검증’)","https://futurecio.tech/ai-fluency-will-become-baseline-skill-but-employees-shouldnt-treat-it-as-tool/"],
+ ]},
+ {g:"B. AI Native 개발 역량·역할·인증 트렌드",items:[
+  ["2026","arXiv — The Rise of AI-Native SW Engineering (3축 Intent·Collaboration·Verification + 9역량 + 4단계 커리큘럼)","https://arxiv.org/abs/2606.12986"],
+  ["2026","Thoughtworks Technology Radar Vol.34 — ‘fundamentals 회귀로 cognitive debt 대응’","https://www.thoughtworks.com/about-us/news/2026/combat-ai-cognitive-debt-radar-v34"],
+  ["2026","Spec-Driven Development / GitHub Spec Kit (Specify→Plan→Tasks→Implement)","https://developer.microsoft.com/blog/spec-driven-development-spec-kit"],
+  ["2026","SDET/QA 진화 — ‘결함 예방(quality eng at scale)’ · Agentic Testing","https://quashbugs.com/blog/qa-to-sdet-ai-2026"],
+  ["2026","‘AI 엔지니어링 = 역할이자 동시에 모든 개발자 베이스라인 스킬’","https://www.netcomlearning.com/blog/how-to-become-an-ai-engineer"],
+  ["2026","AI 인증 단계화 (기반→실무→에이전트)","https://www.datacamp.com/blog/top-ai-certifications"],
+ ]},
+ {g:"C. 하네스/컨텍스트 엔지니어링 · 플랫폼 · 토큰효율",items:[
+  ["2026","Harness Engineering (Fowler/Böckeler) — Agent=Model+Harness, Guides+Sensors, ‘practice not a role’","https://martinfowler.com/articles/harness-engineering.html"],
+  ["2026","Nestr — Harness Engineering ↔ Organizational Governance","https://nestr.io/blog/harness-engineering-ai-agents"],
+  ["2026","프롬프트→컨텍스트→하네스 3시대","https://mohamed-hendawy.medium.com/from-prompts-to-harnesses-the-three-eras-of-ai-agent-engineering-fbd0e6168b21"],
+  ["2026","Context Engineering for Coding Agents (Martin Fowler)","https://martinfowler.com/articles/exploring-gen-ai/context-engineering-coding-agents.html"],
+  ["2026","Google 5-Day AI Agents Intensive (models·tools·orchestration·memory·evaluation)","https://www.kaggle.com/learn-guide/5-day-agents"],
+  ["2026","Platform Engineering / IDP ‘shift-down’ — Gartner 80% (golden path)","https://www.webpronews.com/platform-engineerings-2026-reckoning-shift-down-ai-fusion-and-the-80-mandate/"],
+  ["2026","FinOps for AI — ‘Inference Bill Shock’, cost-per-token","https://www.finops.org/wg/finops-for-ai-overview/"],
+  ["2026","FinOps X 2026 — ‘The Great Token Panic’","https://www.nops.io/blog/finops-x-2026-day-1-keynote/"],
+ ]},
+ {g:"D. 보안 (Security-for-AI)",items:[
+  ["2026","OWASP Top 10 for LLM Apps (2026)","https://elevateconsult.com/insights/owasp-llm-top-10-security-vulnerabilities-every-ai-developer-must-know-in-2026/"],
+  ["2026","OWASP Top 10 for Agentic Applications","https://www.practical-devsecops.com/owasp-top-10-agentic-applications/"],
+  ["2026","개발자 주도 위협모델링 (AI)","https://securityboulevard.com/2026/03/threat-modeling-with-ai-a-developer-driven-boon-for-enterprise-security/"],
+ ]},
+ {g:"E. 주니어 사다리 (Broken Ladder)",items:[
+  ["2026","SSRN — The Broken Ladder (주니어 고용 −9~10%)","https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6787638"],
+  ["2026","WEF Future of Jobs — ‘Software developers are the vanguard’","https://www.weforum.org/stories/2026/01/software-developers-ai-work/"],
+ ]},
+ {g:"F. 보고서가 인용한 외부 토대 (v2 §부록)",items:[
+  ["2025","Karpathy ‘Software Is Changing (Again)’ (YC)","https://www.latent.space/p/s3"],
+  ["2025","Sean Grove ‘The New Code’ (OpenAI)","https://www.ikangai.com/the-future-of-programming-is-writing-better-instructions-not-better-code/"],
+  ["2025","Kent Beck ‘Augmented Coding: Beyond the Vibes’","https://tidyfirst.substack.com/p/augmented-coding-beyond-the-vibes"],
+  ["2025","Simon Willison ‘The lethal trifecta’","https://simonwillison.net/2025/Jun/16/the-lethal-trifecta/"],
+  ["2026","Anthropic ‘Harness design for long-running apps’","https://www.anthropic.com/engineering/harness-design-long-running-apps"],
+  ["2026","‘Evolution of AI Agentic Patterns: Prompt→Context→Harness’","https://bits-bytes-nn.github.io/insights/agentic-ai/2026/04/05/evolution-of-ai-agentic-patterns-en.html"],
+ ]},
+];
+
+/* ---------- RENDER ---------- */
+const pbody=document.getElementById('pbody'), ptitle=document.getElementById('p-title');
+const mdPath=f=>encodeURI('중급 나노디그리/'+f);
+
+function blk(lbl,arr){return `<div class="sec-blk"><div class="lbl">${lbl}</div><ul>${arr.map(x=>`<li>${x}</li>`).join('')}</ul></div>`;}
+function quotes(lbl,arr){return `<div class="sec-blk"><div class="lbl">${lbl}</div>${arr.map(x=>`<div class="quote">${x}</div>`).join('')}</div>`;}
+
+function courseChips(codes){if(!codes)return '';
+ return `<div class="sec-blk"><div class="lbl">중급 나노디그리(이수 → 전문가 도전)</div>${codes.map(c=>{const C=COURSES.find(x=>x.code===c);return `<span class="pill" style="cursor:pointer" data-type="course" data-key="${c}">${c} ${C?C.name:''}</span>`;}).join('')}</div>`;}
+
+function showTrack(k){const t=TRACKS[k];ptitle.textContent=t.title;
+ pbody.innerHTML=`<h3>${t.title}</h3><p class="role-sub">${t.sub}</p>
+  ${blk('AI Native 역할 (복수)',t.roles)}
+  ${quotes('AS-IS — 인터뷰 원문',t.asis)}
+  ${quotes('TO-BE — 외부 리더 + 2026 현황',t.tobe)}
+  <div class="sec-blk"><div class="lbl">핵심 역량</div>${t.comp.map(c=>`<span class="pill">${c}</span>`).join('')}</div>
+  ${blk('육성 (HOW)',t.how)}
+  ${courseChips(t.courses)}`;
+ pbody.scrollTop=0;}
+
+function showLevelLike(obj){ptitle.textContent=obj.title;
+ let html=`<h3 style="color:${obj.color}">${obj.title}</h3><p class="role-sub">${obj.sub}</p>`;
+ if(obj.cert&&obj.cert!=="—")html+=`<div class="sec-blk"><div class="lbl">인증</div><p>${obj.cert}</p></div>`;
+ obj.blocks.forEach(b=>html+=blk(b[0],b[1]));
+ pbody.innerHTML=html;pbody.scrollTop=0;}
+
+function showPrinciple(p){ptitle.textContent=p.n+" 원칙";
+ pbody.innerHTML=`<h3>${p.t}</h3><p class="role-sub">설계 원칙 ${p.n}</p>
+  <div class="sec-blk"><p>${p.b}</p></div>${blk('근거',p.ev)}`;pbody.scrollTop=0;}
+
+function showCourse(code){const c=COURSES.find(x=>x.code===code);if(!c)return;ptitle.textContent=c.code;
+ pbody.innerHTML=`<h3>${c.name}</h3><p class="role-sub">${c.code} · ${c.track} · ${c.type} · 중급 L3 · ${c.hours} · 배지: ${c.badge}</p>
+  <div class="sec-blk"><p>${c.def}</p></div>
+  ${blk('학습목표 (Bloom)',c.obj)}
+  ${blk('학습 모듈',c.mod)}
+  <div class="sec-blk"><div class="lbl">이수 DoD</div><p>${c.dod}</p></div>
+  <div class="sec-blk"><div class="lbl">인증 연계</div><p>${c.cert}</p></div>
+  <div class="sec-blk"><a href="${mdPath(c.file)}" target="_blank" rel="noopener">📄 과정 설계서(MD) 열기 ↗</a></div>`;
+ pbody.scrollTop=0;}
+
+function showCourseGroup(g){const map={common:'common',arch:'architect',sdet:'sdet',sec:'security'};
+ if(g==='common')showLevelLike(COMMON.common); else showTrack(map[g]);}
+
+// principles strip
+document.getElementById('principles').innerHTML=PRINCIPLES.map((p,i)=>
+ `<div class="pchip" data-pi="${i}"><div class="pn">${p.n}</div><div class="pt">${p.t}</div></div>`).join('');
+
+// course cards (grouped)
+const CGROUPS=[["common","공통 (전 트랙 필수)"],["arch","Architect"],["sdet","SDET"],["sec","Security"]];
+document.getElementById('cgroups').innerHTML=CGROUPS.map(([g,label])=>{
+ const cs=COURSES.filter(c=>c.grp===g);
+ return `<div class="cgroup ${g}"><h3>${label}</h3>${cs.map(c=>
+   `<div class="ccard ${g}" data-type="course" data-key="${c.code}">
+      <div class="cc-top"><span class="cc-code">${c.code}</span><span class="cc-hours">${c.hours}</span></div>
+      <div class="cc-name">${c.name}</div>
+      <div class="cc-desc">${c.desc}</div>
+      <div class="cc-foot"><span class="cc-badge">→ 전문가 인증 도전</span><a class="cc-md" href="${mdPath(c.file)}" target="_blank" rel="noopener">MD ↗</a></div>
+   </div>`).join('')}</div>`;
+}).join('');
+
+// references
+document.getElementById('rbody').innerHTML=REFS.map((grp,i)=>
+ `<details class="refgrp" ${i===0?'open':''}><summary>${grp.g}<span class="cnt">${grp.items.length}건</span></summary>
+  <ul>${grp.items.map(it=>`<li><span class="yr">${it[0]}</span><a href="${it[2]}" target="_blank" rel="noopener">${it[1]}</a></li>`).join('')}</ul></details>`).join('');
+
+/* ---------- EVENTS ---------- */
+document.addEventListener('click',e=>{
+ if(e.target.closest('a[href]'))return; // let links navigate
+ const el=e.target.closest('[data-type],[data-pi]');if(!el)return;
+ if(el.dataset.pi!==undefined){showPrinciple(PRINCIPLES[+el.dataset.pi]);scrollPanel();return;}
+ const{type,key}=el.dataset;
+ if(type==='track')showTrack(key);
+ else if(type==='level')showLevelLike(LEVELS[key]);
+ else if(type==='common')showLevelLike(COMMON[key]);
+ else if(type==='course')showCourse(key);
+ else if(type==='course-track'){showCourseGroup(key);document.getElementById('courses').scrollIntoView({behavior:'smooth',block:'start'});}
+ scrollPanel();
+});
+function scrollPanel(){if(window.innerWidth<=1080)document.querySelector('.panel').scrollIntoView({behavior:'smooth',block:'start'});}
+document.getElementById('refbtn').addEventListener('click',()=>document.getElementById('refsec').scrollIntoView({behavior:'smooth'}));
+</script>
+</body>
+</html>
