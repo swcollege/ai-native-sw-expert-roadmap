@@ -159,7 +159,35 @@
   .cc-desc{font-size:11.5px;color:#39414e;line-height:1.45}
   .cc-foot{display:flex;justify-content:space-between;align-items:center;margin-top:2px}
   .cc-badge{font-size:10px;font-weight:700;color:var(--muted)}
-  .cc-md{font-size:10.5px;font-weight:700}
+  .cc-md{font-size:10.5px;font-weight:700;color:var(--lg);background:#fff;border:1px solid var(--line);border-radius:7px;padding:3px 9px;cursor:pointer;font-family:inherit;transition:.15s}
+  .cc-md:hover{background:var(--lg);color:#fff;border-color:var(--lg)}
+  .docbtn{font-size:12px;font-weight:700;color:var(--lg);background:#fff;border:1px solid var(--lg);border-radius:8px;padding:6px 12px;cursor:pointer;font-family:inherit;transition:.15s}
+  .docbtn:hover{background:var(--lg);color:#fff}
+  /* Doc modal (rendered markdown) */
+  .doc-overlay{position:fixed;inset:0;background:rgba(16,20,30,.55);display:none;align-items:flex-start;justify-content:center;z-index:50;padding:40px 16px;overflow:auto}
+  .doc-overlay.open{display:flex}
+  .doc-modal{background:#fff;border-radius:16px;max-width:880px;width:100%;box-shadow:0 24px 64px rgba(0,0,0,.32);max-height:calc(100vh - 80px);display:flex;flex-direction:column;overflow:hidden}
+  .doc-head{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--line);background:#fff}
+  .doc-head h3{margin:0;font-size:15px;font-weight:800}
+  .doc-close{border:1px solid var(--line);background:#fff;border-radius:8px;width:30px;height:30px;cursor:pointer;font-size:15px;line-height:1;color:var(--muted)}
+  .doc-close:hover{background:#f1f3f7;color:var(--ink)}
+  .doc-body{padding:18px 26px 30px;overflow:auto;font-size:13.5px;line-height:1.66;color:#23282f}
+  .doc-body h1{font-size:20px;margin:.1em 0 .6em;padding-bottom:.3em;border-bottom:2px solid var(--line)}
+  .doc-body h2{font-size:16px;margin:1.4em 0 .5em;color:var(--lg)}
+  .doc-body h3{font-size:14px;margin:1.1em 0 .4em}
+  .doc-body h4{font-size:13px;margin:1em 0 .3em}
+  .doc-body p{margin:.5em 0}
+  .doc-body ul{margin:.4em 0;padding-left:1.35em}
+  .doc-body li{margin:.25em 0}
+  .doc-body blockquote{margin:.7em 0;padding:9px 14px;background:#f6f8fb;border-left:3px solid var(--band);border-radius:6px;color:#41484f;font-size:12.5px}
+  .doc-body code{background:#f1f3f7;border:1px solid var(--line);border-radius:4px;padding:1px 5px;font-size:12px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+  .doc-body a{color:var(--lg)}
+  .doc-body strong{color:#11151c}
+  .doc-body em{color:#41484f}
+  .doc-body hr{border:none;border-top:1px solid var(--line);margin:1.2em 0}
+  .doc-body table{border-collapse:collapse;width:100%;font-size:12px;margin:.6em 0}
+  .doc-body th,.doc-body td{border:1px solid var(--line);padding:5px 8px;text-align:left}
+  .doc-body th{background:#f4f6f9}
 
   /* Verdict + refs */
   .verdict{margin-top:20px;padding:18px 20px;border-radius:16px;background:linear-gradient(180deg,#fff, #fbf7f9);border:1px solid var(--lg-soft);box-shadow:var(--shadow)}
@@ -325,6 +353,13 @@
   </section>
 
   <p class="foot">AI Native SW Expert Roadmap v2 · SW 공학연구소(SW College) · 2026-06-15 — 원천 설계: <code>AI Native SW Expert Roadmap.md</code> · 중급 과정: <code>중급 나노디그리/*.md</code></p>
+</div>
+
+<div class="doc-overlay" id="docOverlay" role="dialog" aria-modal="true">
+  <div class="doc-modal">
+    <div class="doc-head"><h3 id="docTitle">과정 설계서</h3><button class="doc-close" id="docClose" aria-label="닫기">✕</button></div>
+    <div class="doc-body" id="docBody"></div>
+  </div>
 </div>
 
 <script>
@@ -558,11 +593,53 @@ function showCourse(code){const c=COURSES.find(x=>x.code===code);if(!c)return;pt
   ${blk('학습 모듈',c.mod)}
   <div class="sec-blk"><div class="lbl">이수 DoD</div><p>${c.dod}</p></div>
   <div class="sec-blk"><div class="lbl">인증 연계</div><p>${c.cert}</p></div>
-  <div class="sec-blk"><a href="${mdPath(c.file)}" target="_blank" rel="noopener">📄 과정 설계서(MD) 열기 ↗</a></div>`;
+  <div class="sec-blk"><button class="docbtn" data-doc="${c.code}">📄 과정 설계서 자세히 보기</button></div>`;
  pbody.scrollTop=0;}
 
 function showCourseGroup(g){const map={common:'common',arch:'architect',sdet:'sdet',sec:'security'};
  if(g==='common')showLevelLike(COMMON.common); else showTrack(map[g]);}
+
+/* --- markdown render + 자세히 보기 modal --- */
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function inlineMd(s){const codes=[];
+ s=s.replace(/`([^`]+)`/g,(m,c)=>{codes.push(c);return '⟦c'+(codes.length-1)+'⟧';});
+ s=s.replace(/\[([^\]]+)\]\(([^)]+)\)/g,(m,t,u)=>'<a href="'+u+'" target="_blank" rel="noopener">'+t+'</a>');
+ s=s.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
+ s=s.replace(/\*([^*]+)\*/g,'<em>$1</em>');
+ s=s.replace(/⟦c(\d+)⟧/g,(m,i)=>'<code>'+codes[+i]+'</code>');
+ return s;}
+function renderList(items){let out='<ul>',open=false,nested=false;
+ for(const it of items){
+  if(it.indent===0){if(nested){out+='</ul>';nested=false;}if(open){out+='</li>';}out+='<li>'+inlineMd(esc(it.text));open=true;}
+  else{if(!nested){out+='<ul>';nested=true;}out+='<li>'+inlineMd(esc(it.text))+'</li>';}}
+ if(nested)out+='</ul>'; if(open)out+='</li>'; return out+'</ul>';}
+function renderTable(rows){rows=rows.filter(r=>!/^\s*\|[\s|:-]+\|\s*$/.test(r));
+ const cells=r=>r.replace(/^\s*\|/,'').replace(/\|\s*$/,'').split('|').map(c=>inlineMd(esc(c.trim())));
+ if(!rows.length)return '';
+ let out='<table><thead><tr>'+cells(rows[0]).map(c=>'<th>'+c+'</th>').join('')+'</tr></thead><tbody>';
+ for(let k=1;k<rows.length;k++)out+='<tr>'+cells(rows[k]).map(c=>'<td>'+c+'</td>').join('')+'</tr>';
+ return out+'</tbody></table>';}
+function mdToHtml(md){const lines=md.replace(/\r\n/g,'\n').split('\n');let html='',i=0,para=[];
+ const flush=()=>{if(para.length){html+='<p>'+inlineMd(esc(para.join(' ')))+'</p>';para=[];}};
+ while(i<lines.length){let line=lines[i];
+  if(/^\s*$/.test(line)){flush();i++;continue;}
+  if(/^(-{3,}|\*{3,}|_{3,})\s*$/.test(line)){flush();html+='<hr>';i++;continue;}
+  let h=line.match(/^(#{1,6})\s+(.*)$/);
+  if(h){flush();const l=h[1].length;html+='<h'+l+'>'+inlineMd(esc(h[2]))+'</h'+l+'>';i++;continue;}
+  if(/^>\s?/.test(line)){flush();let bq=[];while(i<lines.length&&/^>\s?/.test(lines[i])){bq.push(lines[i].replace(/^>\s?/,''));i++;}html+='<blockquote>'+bq.map(x=>inlineMd(esc(x))).join('<br>')+'</blockquote>';continue;}
+  if(/^\s*\|.*\|\s*$/.test(line)){flush();let rows=[];while(i<lines.length&&/^\s*\|.*\|\s*$/.test(lines[i])){rows.push(lines[i]);i++;}html+=renderTable(rows);continue;}
+  if(/^\s*[-*]\s+/.test(line)){flush();let items=[];while(i<lines.length&&/^\s*[-*]\s+/.test(lines[i])){let m=lines[i].match(/^(\s*)[-*]\s+(.*)$/);items.push({indent:m[1].length,text:m[2]});i++;}html+=renderList(items);continue;}
+  para.push(line.trim());i++;}
+ flush();return html;}
+const docOverlay=document.getElementById('docOverlay'),docBody=document.getElementById('docBody'),docTitle=document.getElementById('docTitle');
+function closeDoc(){docOverlay.classList.remove('open');}
+async function openCourseDoc(code){const c=COURSES.find(x=>x.code===code);if(!c)return;
+ docTitle.textContent=c.code+' · '+c.name;docBody.innerHTML='<p style="color:#5b6472">불러오는 중…</p>';docOverlay.classList.add('open');docBody.scrollTop=0;
+ try{const res=await fetch(mdPath(c.file));if(!res.ok)throw 0;const md=await res.text();docBody.innerHTML=mdToHtml(md);docBody.scrollTop=0;}
+ catch(e){docBody.innerHTML='<p>로컬 파일에서는 미리보기가 제한될 수 있습니다. <a href="'+mdPath(c.file)+'" target="_blank" rel="noopener">원문 열기 ↗</a></p>';}}
+document.getElementById('docClose').addEventListener('click',closeDoc);
+docOverlay.addEventListener('click',e=>{if(e.target===docOverlay)closeDoc();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDoc();});
 
 // principles strip
 document.getElementById('principles').innerHTML=PRINCIPLES.map((p,i)=>
@@ -577,7 +654,7 @@ document.getElementById('cgroups').innerHTML=CGROUPS.map(([g,label])=>{
       <div class="cc-top"><span class="cc-code">${c.code}</span><span class="cc-hours">${c.hours}</span></div>
       <div class="cc-name">${c.name}</div>
       <div class="cc-desc">${c.desc}</div>
-      <div class="cc-foot"><span class="cc-badge">→ 전문가 인증 도전</span><a class="cc-md" href="${mdPath(c.file)}" target="_blank" rel="noopener">MD ↗</a></div>
+      <div class="cc-foot"><span class="cc-badge">→ 전문가 인증 도전</span><button class="cc-md" data-doc="${c.code}">자세히 보기</button></div>
    </div>`).join('')}</div>`;
 }).join('');
 
@@ -588,6 +665,8 @@ document.getElementById('rbody').innerHTML=REFS.map((grp,i)=>
 
 /* ---------- EVENTS ---------- */
 document.addEventListener('click',e=>{
+ const docBtn=e.target.closest('[data-doc]');
+ if(docBtn){openCourseDoc(docBtn.dataset.doc);return;}
  if(e.target.closest('a[href]'))return; // let links navigate
  const el=e.target.closest('[data-type],[data-pi]');if(!el)return;
  if(el.dataset.pi!==undefined){showPrinciple(PRINCIPLES[+el.dataset.pi]);scrollPanel();return;}
